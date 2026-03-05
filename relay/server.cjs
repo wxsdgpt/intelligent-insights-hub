@@ -19,7 +19,6 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const { execSync } = require("child_process");
 
 const PORT = process.env.RELAY_PORT || 3456;
 const DIST = path.resolve(__dirname, "../dist");
@@ -69,29 +68,57 @@ function serveStatic(req, res) {
   }
 }
 
+const GATEWAY_URL = process.env.OPENCLAW_GW_URL || "http://127.0.0.1:18789";
+const GATEWAY_TOKEN = process.env.OPENCLAW_GW_TOKEN || "eca4234ac994110849496f8c92df8662832f612bd9eedd51";
+
 function sendToOpenClaw(message) {
-  try {
-    const escaped = message.replace(/'/g, "'\\''");
-    const cmd = `openclaw agent --message '${escaped}' --json --timeout 120 2>&1`;
-    const result = execSync(cmd, {
-      timeout: 130000,
-      encoding: "utf-8",
-      env: { ...process.env },
+  return new Promise((resolve) => {
+    const postData = JSON.stringify({
+      model: "openclaw:main",
+      messages: [{ role: "user", content: message }],
+      user: "moboost-web",
     });
-    // Parse JSON output to extract the reply
-    try {
-      const data = JSON.parse(result.trim());
-      return data.reply || data.message || data.content || result.trim();
-    } catch {
-      // If not JSON, return raw output (strip ANSI codes)
-      return result.trim().replace(/\x1b\[[0-9;]*m/g, "");
-    }
-  } catch (err) {
-    console.error("[relay] openclaw agent error:", err.message);
-    // Try to extract useful output from stderr
-    const output = err.stdout || err.stderr || err.message;
-    return `Error: ${typeof output === "string" ? output.substring(0, 500) : err.message}`;
-  }
+
+    const url = new URL(`${GATEWAY_URL}/v1/chat/completions`);
+    const options = {
+      hostname: url.hostname,
+      port: url.port,
+      path: url.pathname,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${GATEWAY_TOKEN}`,
+        "Content-Length": Buffer.byteLength(postData),
+      },
+    };
+
+    const req = http.request(options, (res) => {
+      let body = "";
+      res.on("data", (c) => (body += c));
+      res.on("end", () => {
+        try {
+          const data = JSON.parse(body);
+          const reply = data.choices?.[0]?.message?.content || body;
+          resolve(reply);
+        } catch {
+          resolve(body);
+        }
+      });
+    });
+
+    req.on("error", (err) => {
+      console.error("[relay] gateway request error:", err.message);
+      resolve(`Error: ${err.message}`);
+    });
+
+    req.setTimeout(120000, () => {
+      req.destroy();
+      resolve("Error: request timeout (120s)");
+    });
+
+    req.write(postData);
+    req.end();
+  });
 }
 
 const server = http.createServer((req, res) => {
@@ -127,10 +154,11 @@ const server = http.createServer((req, res) => {
           return;
         }
         console.log(`[relay] → ${message.substring(0, 100)}`);
-        const reply = sendToOpenClaw(message);
-        console.log(`[relay] ← ${reply.substring(0, 100)}`);
-        res.writeHead(200, { ...corsHeaders, "Content-Type": "application/json" });
-        res.end(JSON.stringify({ reply }));
+        sendToOpenClaw(message).then((reply) => {
+          console.log(`[relay] ← ${reply.substring(0, 100)}`);
+          res.writeHead(200, { ...corsHeaders, "Content-Type": "application/json" });
+          res.end(JSON.stringify({ reply }));
+        });
       } catch (err) {
         res.writeHead(500, { ...corsHeaders, "Content-Type": "application/json" });
         res.end(JSON.stringify({ error: err.message }));
