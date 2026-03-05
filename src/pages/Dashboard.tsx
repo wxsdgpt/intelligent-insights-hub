@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Radar, Shield, Languages, TrendingUp, TrendingDown, AlertTriangle,
@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import { motion } from "framer-motion";
 import { competitors, getAllAnomalies, INDUSTRY_BENCHMARKS } from "@/data/competitors";
+import { DashboardSkeleton } from "@/components/ui/skeleton-loader";
 
 const COLORS = ["#00CED1", "#7C3AED", "#3B82F6", "#F59E0B", "#10B981", "#EF4444", "#EC4899"];
 
@@ -139,7 +140,15 @@ function KPICard({ icon: Icon, label, value, change, changeLabel, color, delay }
 }
 
 export default function Dashboard() {
+  const [isLoading, setIsLoading] = useState(true);
   const stats = useAggregateStats();
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) return <DashboardSkeleton />;
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload) return null;

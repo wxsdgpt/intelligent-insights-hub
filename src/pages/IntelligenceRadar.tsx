@@ -1,10 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Filter, ChevronDown, AlertTriangle, TrendingUp, TrendingDown, Minus, Radar, Eye, Zap, ArrowUpRight, Bell } from "lucide-react";
 import DashHeader from "@/components/layout/DashHeader";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
 import { competitors, getAllAnomalies, type Competitor } from "@/data/competitors";
+import { RadarSkeleton } from "@/components/ui/skeleton-loader";
 
 type SortKey = "mau" | "downloads" | "adSpend" | "arpu" | "mauChange" | "newAds";
 
@@ -42,9 +43,17 @@ function SeverityDot({ severity }: { severity: string }) {
 }
 
 export default function IntelligenceRadar() {
+  const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"monitoring" | "recommended" | "anomalies">("monitoring");
   const [sortKey, setSortKey] = useState<SortKey>("mau");
   const [sortDesc, setSortDesc] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 600);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) return <RadarSkeleton />;
 
   const sorted = useMemo(() => {
     return [...competitors].sort((a, b) => {

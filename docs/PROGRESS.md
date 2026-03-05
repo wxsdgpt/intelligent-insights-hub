@@ -45,9 +45,27 @@
    - 每张卡片增加模块图标（Radar / Languages / Shield）
    - hover 动画优化（箭头微移）
 
+## 2026-03-06 04:17 — Cron 迭代 #2
+
+### ✅ 本次完成
+1. **Dashboard 聚合数据视图** — 新建 `src/pages/Dashboard.tsx`
+   - 顶部 4 张 KPI 卡片：Total MAU、Total Ad Spend、Total Revenue、Active Alerts
+   - 30 天市场趋势图：MAU + Ad Spend 双轴面积图（Recharts，带渐变填充）
+   - MAU 市场份额饼图（内环样式 + 图例）
+   - 三栏模块摘要：
+     - **Intelligence Radar**：Top Movers（增长最快 / ARPU最高 / 投放最猛）+ 平均留存率 vs 行业基准进度条
+     - **Localization Engine**：完成量/队列/语言/通过率 + Pipeline 状态条
+     - **Risk Scanner**：合规评分圆环 + 风险等级分布 + 最近扫描列表
+   - 底部：最近 6 条市场异动卡片（按严重等级着色）
+   - 所有数据从 `competitors.ts` 实时聚合
+   - 注册 `/dashboard` 路由，侧边栏 Dashboard 链接现在可用
+
+2. **路由注册**
+   - `App.tsx` 新增 Dashboard import 和 Route
+
 ### 🔄 待做（cron 持续迭代）
-- [ ] Dashboard 页增加聚合数据视图
 - [ ] 加载骨架屏
 - [ ] 响应式适配移动端
 - [ ] 搜索框 AI 对话优化
 - [ ] 视觉一致性检查
+- [ ] Ad Spend 分布柱状图（Dashboard 扩展）

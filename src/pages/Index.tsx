@@ -162,6 +162,40 @@ export default function Index() {
         </motion.div>
       </div>
 
+      {/* Quick Action Suggestions */}
+      <AnimatePresence>
+        {!chatOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="max-w-2xl mx-auto px-6 mt-3"
+          >
+            <div className="flex flex-wrap justify-center gap-2">
+              {[
+                { emoji: "📊", label: "Thrillzz 竞品分析", query: "分析 Thrillzz 最近的用户增长趋势和投放策略" },
+                { emoji: "🔍", label: "市场异动", query: "最近有什么重要的市场异动？" },
+                { emoji: "💡", label: "投放建议", query: "基于当前竞品数据，给出投放优化建议" },
+                { emoji: "📈", label: "ARPU 对比", query: "对比各竞品的 ARPU 和商业化能力" },
+              ].map((chip) => (
+                <button
+                  key={chip.label}
+                  onClick={() => {
+                    setChatOpen(true);
+                    sendQuery(chip.query);
+                    setQuery("");
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-card/80 border border-border/50 text-xs text-muted-foreground hover:text-foreground hover:border-primary/30 hover:bg-primary/5 transition-all"
+                >
+                  <span>{chip.emoji}</span>
+                  <span>{chip.label}</span>
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* AI Chat Panel */}
       <AnimatePresence>
         {chatOpen && (
