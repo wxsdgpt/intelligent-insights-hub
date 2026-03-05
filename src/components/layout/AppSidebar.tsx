@@ -11,7 +11,8 @@ const navItems = [
 
 export default function AppSidebar() {
   const location = useLocation();
-  const isDashPage = ["/intelligence-radar", "/localization-engine", "/risk-scanner", "/competitor"].some(p => location.pathname.startsWith(p));
+  // All pages now use the dark dash theme
+  const isDashPage = true;
 
   return (
     <aside className={`w-56 min-h-screen flex flex-col py-6 px-4 border-r shrink-0 ${

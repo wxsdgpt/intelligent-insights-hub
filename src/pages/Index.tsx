@@ -1,4 +1,4 @@
-import { Search, Sparkles, Play, ArrowRight, Send, X, Bot, User, Radar, Shield, Languages, TrendingUp, TrendingDown, AlertTriangle, Activity } from "lucide-react";
+import { Search, Sparkles, Play, ArrowRight, Send, X, Bot, User, Radar, Shield, Languages, TrendingUp, TrendingDown, AlertTriangle, Activity, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -70,9 +70,10 @@ export default function Index() {
       icon: Radar,
       status: `${stats.highAnomalies} alerts`,
       statusColor: stats.highAnomalies > 0
-        ? "text-destructive bg-destructive/10"
-        : "text-dash-green bg-dash-green/10",
+        ? "text-dash-red bg-dash-red/15 border border-dash-red/30"
+        : "text-dash-green bg-dash-green/15 border border-dash-green/30",
       link: "/intelligence-radar",
+      accentColor: "dash-cyan",
       metrics: [
         { label: "Tracked Apps", value: stats.totalApps.toString(), icon: Activity },
         { label: "Total MAU", value: `${stats.totalMAU.toFixed(1)}M`, icon: TrendingUp },
@@ -89,8 +90,9 @@ export default function Index() {
       title: "Localization Engine",
       icon: Languages,
       status: "Processing",
-      statusColor: "text-primary bg-primary/10",
+      statusColor: "text-dash-purple bg-dash-purple/15 border border-dash-purple/30",
       link: "/localization-engine",
+      accentColor: "dash-purple",
       metrics: [
         { label: "In Queue", value: "12", icon: Activity },
         { label: "Completed", value: "48", icon: TrendingUp },
@@ -105,8 +107,9 @@ export default function Index() {
       title: "Risk Scanner",
       icon: Shield,
       status: "2 High Risk",
-      statusColor: "text-destructive bg-destructive/10",
+      statusColor: "text-dash-red bg-dash-red/15 border border-dash-red/30",
       link: "/risk-scanner",
+      accentColor: "dash-green",
       metrics: [
         { label: "Scanned", value: "24", icon: Shield },
         { label: "High Risk", value: "2", icon: AlertTriangle },
@@ -119,15 +122,15 @@ export default function Index() {
   ];
 
   return (
-    <div className="flex-1 min-h-screen bg-gradient-to-br from-background via-muted to-background relative">
+    <div className="flex-1 min-h-screen bg-dash-bg relative overflow-auto">
       {/* Agent Status */}
-      <div className="flex justify-center pt-4">
+      <div className="flex justify-center pt-5">
         <div className="flex items-center gap-2 text-sm">
-          <span className="text-muted-foreground">Moboost Agent Status:</span>
-          <span className="w-2 h-2 rounded-full bg-dash-green animate-pulse" />
+          <span className="text-dash-text-muted">Moboost Agent Status:</span>
+          <span className="w-2 h-2 rounded-full bg-dash-green animate-pulse-glow" />
           <span className="text-dash-green font-medium">Active</span>
-          <span className="text-muted-foreground/50 mx-2">|</span>
-          <span className="text-muted-foreground">
+          <span className="text-dash-text-muted/50 mx-2">|</span>
+          <span className="text-dash-text-muted">
             {stats.risingApps} rising · {stats.decliningApps} declining
           </span>
         </div>
@@ -137,8 +140,8 @@ export default function Index() {
       <div className="max-w-2xl mx-auto mt-8 px-6">
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
           <form onSubmit={handleSearch} className="relative">
-            <div className="flex items-center bg-card rounded-2xl shadow-lg border border-border px-5 py-4">
-              <Search className="w-5 h-5 text-muted-foreground mr-3" />
+            <div className="flex items-center bg-dash-card rounded-2xl shadow-lg border border-dash-border px-5 py-4 focus-within:border-dash-cyan/40 transition-colors">
+              <Search className="w-5 h-5 text-dash-text-muted mr-3" />
               <input
                 ref={inputRef}
                 type="text"
@@ -146,15 +149,15 @@ export default function Index() {
                 onChange={(e) => setQuery(e.target.value)}
                 onFocus={handleSearchFocus}
                 placeholder="Ask Moboost AI anything..."
-                className="flex-1 bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
+                className="flex-1 bg-transparent outline-none text-dash-text placeholder:text-dash-text-muted"
               />
               {query.trim() ? (
-                <button type="submit" className="ml-3 p-1.5 rounded-lg hover:bg-muted transition-colors">
-                  <Send className="w-5 h-5 text-primary" />
+                <button type="submit" className="ml-3 p-1.5 rounded-lg hover:bg-dash-card-hover transition-colors">
+                  <Send className="w-5 h-5 text-dash-cyan" />
                 </button>
               ) : (
-                <button type="button" className="ml-3 p-1.5 rounded-lg hover:bg-muted transition-colors">
-                  <Sparkles className="w-5 h-5 text-secondary" />
+                <button type="button" className="ml-3 p-1.5 rounded-lg hover:bg-dash-card-hover transition-colors">
+                  <Sparkles className="w-5 h-5 text-dash-purple" />
                 </button>
               )}
             </div>
@@ -185,7 +188,7 @@ export default function Index() {
                     sendQuery(chip.query);
                     setQuery("");
                   }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-card/80 border border-border/50 text-xs text-muted-foreground hover:text-foreground hover:border-primary/30 hover:bg-primary/5 transition-all"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-dash-card/80 border border-dash-border text-xs text-dash-text-muted hover:text-dash-cyan hover:border-dash-cyan/30 hover:bg-dash-cyan/5 transition-all"
                 >
                   <span>{chip.emoji}</span>
                   <span>{chip.label}</span>
@@ -205,21 +208,21 @@ export default function Index() {
             exit={{ opacity: 0, y: -10, height: 0 }}
             className="max-w-2xl mx-auto px-6 mt-3"
           >
-            <div className="bg-card rounded-2xl border border-border shadow-lg overflow-hidden">
+            <div className="bg-dash-card rounded-2xl border border-dash-border shadow-lg overflow-hidden">
               {/* Chat Header */}
-              <div className="flex items-center justify-between px-5 py-3 border-b border-border">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-dash-border">
                 <div className="flex items-center gap-2">
-                  <Bot className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium text-foreground">Moboost AI</span>
+                  <Bot className="w-4 h-4 text-dash-cyan" />
+                  <span className="text-sm font-medium text-dash-text">Moboost AI</span>
                   {loading && (
-                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                    <span className="flex items-center gap-1 text-xs text-dash-text-muted">
+                      <span className="w-1.5 h-1.5 rounded-full bg-dash-cyan animate-pulse" />
                       thinking...
                     </span>
                   )}
                 </div>
-                <button onClick={handleCloseChat} className="p-1 rounded-md hover:bg-muted transition-colors">
-                  <X className="w-4 h-4 text-muted-foreground" />
+                <button onClick={handleCloseChat} className="p-1 rounded-md hover:bg-dash-card-hover transition-colors">
+                  <X className="w-4 h-4 text-dash-text-muted" />
                 </button>
               </div>
 
@@ -227,8 +230,8 @@ export default function Index() {
               <div className="max-h-80 overflow-y-auto px-5 py-4 space-y-4">
                 {messages.length === 0 && (
                   <div className="text-center py-8">
-                    <Sparkles className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
-                    <p className="text-sm text-muted-foreground">输入问题，Moboost AI 将为你分析</p>
+                    <Sparkles className="w-8 h-8 text-dash-text-muted/30 mx-auto mb-3" />
+                    <p className="text-sm text-dash-text-muted">输入问题，Moboost AI 将为你分析</p>
                   </div>
                 )}
                 {messages.map((msg, i) => (
@@ -239,22 +242,22 @@ export default function Index() {
                     className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                   >
                     {msg.role === "assistant" && (
-                      <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                        <Bot className="w-3.5 h-3.5 text-primary" />
+                      <div className="w-7 h-7 rounded-full bg-dash-cyan/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <Bot className="w-3.5 h-3.5 text-dash-cyan" />
                       </div>
                     )}
                     <div
                       className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                         msg.role === "user"
-                          ? "bg-primary text-primary-foreground rounded-br-md"
-                          : "bg-muted text-foreground rounded-bl-md"
+                          ? "bg-dash-cyan text-dash-bg rounded-br-md"
+                          : "bg-dash-card-hover text-dash-text rounded-bl-md"
                       }`}
                     >
                       <pre className="whitespace-pre-wrap font-sans">{msg.content}</pre>
                     </div>
                     {msg.role === "user" && (
-                      <div className="w-7 h-7 rounded-full bg-foreground/10 flex items-center justify-center shrink-0 mt-0.5">
-                        <User className="w-3.5 h-3.5 text-foreground/60" />
+                      <div className="w-7 h-7 rounded-full bg-dash-text/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <User className="w-3.5 h-3.5 text-dash-text-muted" />
                       </div>
                     )}
                   </motion.div>
@@ -276,15 +279,15 @@ export default function Index() {
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1 * (i + 1) }}
-              className="bg-card rounded-2xl border border-border p-6 flex flex-col shadow-sm hover:shadow-md transition-shadow group"
+              className="bg-dash-card rounded-2xl border border-dash-border p-6 flex flex-col hover:border-dash-cyan/20 transition-all group"
             >
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Icon className="w-4.5 h-4.5 text-primary" />
+                  <div className="w-9 h-9 rounded-xl bg-dash-cyan/10 flex items-center justify-center">
+                    <Icon className="w-4.5 h-4.5 text-dash-cyan" />
                   </div>
-                  <h3 className="font-display font-bold text-base text-foreground">{card.title}</h3>
+                  <h3 className="font-display font-bold text-base text-dash-text">{card.title}</h3>
                 </div>
                 <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${card.statusColor}`}>
                   {card.status}
@@ -296,12 +299,12 @@ export default function Index() {
                 {card.metrics.map((m) => {
                   const MIcon = m.icon;
                   return (
-                    <div key={m.label} className="bg-muted/50 rounded-xl px-3 py-2.5">
+                    <div key={m.label} className="bg-dash-bg rounded-xl px-3 py-2.5">
                       <div className="flex items-center gap-1.5 mb-1">
-                        <MIcon className="w-3 h-3 text-muted-foreground" />
-                        <span className="text-[11px] text-muted-foreground">{m.label}</span>
+                        <MIcon className="w-3 h-3 text-dash-text-muted" />
+                        <span className="text-[11px] text-dash-text-muted">{m.label}</span>
                       </div>
-                      <p className="text-lg font-bold text-foreground leading-tight">{m.value}</p>
+                      <p className="text-lg font-bold text-dash-text leading-tight">{m.value}</p>
                     </div>
                   );
                 })}
@@ -312,7 +315,7 @@ export default function Index() {
                 <div className={`text-xs px-3 py-2 rounded-lg mb-4 ${
                   card.highlightPositive
                     ? "bg-dash-green/10 text-dash-green"
-                    : "bg-destructive/10 text-destructive"
+                    : "bg-dash-red/10 text-dash-red"
                 }`}>
                   {card.highlightPositive
                     ? <TrendingUp className="w-3 h-3 inline mr-1.5 -mt-0.5" />
@@ -325,7 +328,7 @@ export default function Index() {
               {/* Link */}
               <Link
                 to={card.link}
-                className="mt-auto pt-4 border-t border-border flex items-center justify-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                className="mt-auto pt-4 border-t border-dash-border flex items-center justify-center gap-2 text-sm font-medium text-dash-text-muted hover:text-dash-cyan transition-colors"
               >
                 View Details
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -341,12 +344,12 @@ export default function Index() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="max-w-5xl mx-auto mt-6 px-6"
+          className="max-w-5xl mx-auto mt-6 px-6 pb-8"
         >
-          <div className="bg-destructive/5 border border-destructive/20 rounded-2xl px-6 py-4">
+          <div className="bg-dash-red/5 border border-dash-red/20 rounded-2xl px-6 py-4">
             <div className="flex items-center gap-2 mb-2">
-              <AlertTriangle className="w-4 h-4 text-destructive" />
-              <span className="text-sm font-semibold text-destructive">Recent High-Priority Alerts</span>
+              <AlertTriangle className="w-4 h-4 text-dash-red" />
+              <span className="text-sm font-semibold text-dash-red">Recent High-Priority Alerts</span>
             </div>
             <div className="space-y-2">
               {getAllAnomalies()
@@ -355,15 +358,15 @@ export default function Index() {
                 .map((a, i) => (
                   <Link
                     key={i}
-                    to={`/intelligence-radar/${a.competitorId}`}
-                    className="flex items-center justify-between text-sm hover:bg-destructive/5 rounded-lg px-2 py-1.5 -mx-2 transition-colors"
+                    to={`/competitor/${a.competitorId}`}
+                    className="flex items-center justify-between text-sm hover:bg-dash-red/5 rounded-lg px-2 py-1.5 -mx-2 transition-colors"
                   >
-                    <span className="text-foreground">
+                    <span className="text-dash-text">
                       <span className="font-medium">{a.competitorName}</span>
-                      <span className="text-muted-foreground mx-2">·</span>
+                      <span className="text-dash-text-muted mx-2">·</span>
                       {a.title}
                     </span>
-                    <span className="text-xs text-muted-foreground shrink-0 ml-4">{a.date}</span>
+                    <span className="text-xs text-dash-text-muted shrink-0 ml-4">{a.date}</span>
                   </Link>
                 ))}
             </div>

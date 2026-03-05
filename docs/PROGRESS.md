@@ -86,8 +86,20 @@
    - 点击直接触发 AI 对话，预填查询语句
    - 展开聊天面板后自动隐藏 chips
 
+## 2026-03-06 05:47 — Cron 迭代 #4
+
+### ✅ 本次完成
+1. **CompetitorDeepDive 骨架屏** — `skeleton-loader.tsx` 新增 `DeepDiveSkeleton`
+   - 完整模拟深度分析页面的加载态：App 头部、双图表区、留存对比、AI 面板、时间轴、异动卡
+   - CompetitorDeepDive 页面增加 600ms 加载过渡，切换竞品时自动重新触发
+   - 导入 `useState` + `useEffect` 管理加载状态
+
+2. **全站响应式适配**
+   - **CompetitorDeepDive**：App 头部 flex-col→flex-row 自适应，指标网格 2/4 列切换，主内容 12 列 → 单列堆叠
+   - **IntelligenceRadar**：统计卡片 2/4 列自适应，monitoring tab 侧栏图表 xl 以下隐藏，数据表横向滚动，推荐监控 1/3 列自适应
+   - 留存率对比网格 1/3 列自适应
+
 ### 🔄 待做（cron 持续迭代）
-- [ ] 响应式适配移动端
-- [ ] 视觉一致性检查
+- [ ] 视觉一致性检查（色彩/间距/字体统一）
 - [ ] Ad Spend 分布柱状图（Dashboard 扩展）
-- [ ] CompetitorDeepDive 骨架屏
+- [ ] 页面过渡动画优化（路由切换）
