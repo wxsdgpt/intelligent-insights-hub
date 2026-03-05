@@ -2,7 +2,8 @@ import { useState, useCallback } from "react";
 
 // Moboost AI Bridge - connects search queries to OpenClaw
 // The API endpoint is configurable: defaults to the relay running on the same host
-const API_BASE = import.meta.env.VITE_MOBOOST_API || "https://moboost-api.openclaw.local";
+// Same-origin when served from relay; override with VITE_MOBOOST_API if needed
+const API_BASE = import.meta.env.VITE_MOBOOST_API || "";
 
 interface AIMessage {
   role: "user" | "assistant";
