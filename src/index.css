@@ -2,95 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Home page - light theme */
+    --background: 225 30% 96%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 230 70% 55%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 260 60% 55%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 225 25% 92%;
+    --muted-foreground: 220 15% 50%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 170 80% 45%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 225 20% 88%;
+    --input: 225 20% 88%;
+    --ring: 230 70% 55%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Dashboard dark tokens */
+    --dash-bg: 210 35% 7%;
+    --dash-card: 210 30% 12%;
+    --dash-card-hover: 210 28% 15%;
+    --dash-border: 210 25% 18%;
+    --dash-text: 210 20% 88%;
+    --dash-text-muted: 210 15% 55%;
+    --dash-cyan: 180 100% 50%;
+    --dash-cyan-dim: 180 60% 35%;
+    --dash-green: 145 70% 50%;
+    --dash-orange: 30 90% 55%;
+    --dash-red: 0 75% 55%;
+    --dash-purple: 270 65% 55%;
+    --dash-blue: 220 80% 55%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Status colors */
+    --status-active: 145 70% 50%;
+    --status-warning: 40 90% 55%;
+    --status-danger: 0 75% 55%;
 
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 15% 40%;
+    --sidebar-primary: 230 70% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 225 30% 95%;
+    --sidebar-accent-foreground: 230 70% 55%;
+    --sidebar-border: 225 20% 90%;
+    --sidebar-ring: 230 70% 55%;
   }
 }
 
@@ -98,8 +72,64 @@ All colors MUST be HSL.
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
   }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+}
+
+/* Dashboard dark page styles */
+.dash-page {
+  background: hsl(var(--dash-bg));
+  color: hsl(var(--dash-text));
+  min-height: 100vh;
+}
+
+.dash-card {
+  background: hsl(var(--dash-card));
+  border: 1px solid hsl(var(--dash-border));
+  border-radius: 0.5rem;
+}
+
+.dash-card-glow {
+  background: hsl(var(--dash-card));
+  border: 1px solid hsl(var(--dash-cyan-dim) / 0.3);
+  border-radius: 0.5rem;
+  box-shadow: 0 0 15px hsl(var(--dash-cyan) / 0.05), inset 0 1px 0 hsl(var(--dash-cyan) / 0.1);
+}
+
+.glow-line {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, hsl(var(--dash-cyan)), transparent);
+}
+
+.neon-text {
+  color: hsl(var(--dash-cyan));
+  text-shadow: 0 0 10px hsl(var(--dash-cyan) / 0.5);
+}
+
+/* Scrollbar for dark pages */
+.dash-page ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.dash-page ::-webkit-scrollbar-track {
+  background: hsl(var(--dash-bg));
+}
+.dash-page ::-webkit-scrollbar-thumb {
+  background: hsl(var(--dash-border));
+  border-radius: 3px;
+}
+
+/* Risk gauge */
+.risk-gauge {
+  background: conic-gradient(
+    hsl(var(--dash-green)) 0deg 120deg,
+    hsl(var(--status-warning)) 120deg 200deg,
+    hsl(var(--dash-orange)) 200deg 280deg,
+    hsl(var(--dash-red)) 280deg 360deg
+  );
 }
