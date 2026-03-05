@@ -18,7 +18,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter basename="/intelligent-insights-hub">
         <div className="flex min-h-screen">
           <AppSidebar />
           <Routes>
