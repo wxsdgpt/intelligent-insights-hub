@@ -72,16 +72,25 @@ function serveStatic(req, res) {
 function sendToOpenClaw(message) {
   try {
     const escaped = message.replace(/'/g, "'\\''");
-    const cmd = `openclaw send --message '${escaped}' --timeout 120 2>&1`;
+    const cmd = `openclaw agent --message '${escaped}' --json --timeout 120 2>&1`;
     const result = execSync(cmd, {
       timeout: 130000,
       encoding: "utf-8",
       env: { ...process.env },
     });
-    return result.trim();
+    // Parse JSON output to extract the reply
+    try {
+      const data = JSON.parse(result.trim());
+      return data.reply || data.message || data.content || result.trim();
+    } catch {
+      // If not JSON, return raw output (strip ANSI codes)
+      return result.trim().replace(/\x1b\[[0-9;]*m/g, "");
+    }
   } catch (err) {
-    console.error("[relay] openclaw send error:", err.message);
-    return `Error: ${err.message}`;
+    console.error("[relay] openclaw agent error:", err.message);
+    // Try to extract useful output from stderr
+    const output = err.stdout || err.stderr || err.message;
+    return `Error: ${typeof output === "string" ? output.substring(0, 500) : err.message}`;
   }
 }
 
