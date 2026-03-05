@@ -27,10 +27,27 @@
    - 行为时间轴（时间线组件）
    - AI 专家分析面板
 
+## 2026-03-06 03:32 — Cron 迭代 #1
+
+### ✅ 本次完成
+1. **Home 页卡片与 Radar 数据联动**
+   - Intelligence Radar 卡片从 `competitors.ts` 实时读取数据：监控 App 数、总 MAU、异动数、广告消耗总额
+   - 卡片顶部显示 top mover（MAU 变化最大的竞品）
+   - 新增 Live Anomaly Ticker：首页底部展示高优先级异动警报，可点击直达 Level 3
+   - Agent Status 栏增加 rising/declining 竞品数量
+
+2. **页面标题修复**
+   - `index.html` title 从 "Lovable App" 改为 "Moboost — AI AdTech Platform"
+   - 清理 Lovable 品牌 OG 标签
+
+3. **卡片设计升级**
+   - 原来的进度条/圆环替换为 2×2 指标网格，信息密度更高
+   - 每张卡片增加模块图标（Radar / Languages / Shield）
+   - hover 动画优化（箭头微移）
+
 ### 🔄 待做（cron 持续迭代）
-- [ ] Home 页卡片与 Radar 数据联动
 - [ ] Dashboard 页增加聚合数据视图
 - [ ] 加载骨架屏
 - [ ] 响应式适配移动端
 - [ ] 搜索框 AI 对话优化
-- [ ] 页面标题改为 Moboost
+- [ ] 视觉一致性检查

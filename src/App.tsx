@@ -11,6 +11,7 @@ import IntelligenceRadar from "./pages/IntelligenceRadar";
 import CompetitorDeepDive from "./pages/CompetitorDeepDive";
 import LocalizationEngine from "./pages/LocalizationEngine";
 import RiskScanner from "./pages/RiskScanner";
+import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
                   <AppSidebar />
                   <Routes>
                     <Route path="/" element={<Index />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/intelligence-radar" element={<IntelligenceRadar />} />
                     <Route path="/competitor/:id" element={<CompetitorDeepDive />} />
                     <Route path="/localization-engine" element={<LocalizationEngine />} />
