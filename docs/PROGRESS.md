@@ -1,5 +1,33 @@
 # Moboost 开发进度
 
+## 2026-03-06 06:32 — Cron 迭代 #5
+
+### ✅ 本次完成
+1. **全站视觉一致性统一** — Home 页迁移至 dash 暗色主题
+   - Home 页原先使用浅色主题（`bg-card`、`text-foreground`、`bg-muted`），与所有其他页面的暗色 dash 主题不一致
+   - 将所有颜色 token 替换为 dash 系统：`bg-dash-card`、`text-dash-text`、`border-dash-border` 等
+   - 搜索栏、聊天面板、模块卡片、异动 ticker 全部使用 dash token
+   - 用户消息气泡使用 `bg-dash-cyan`，AI 回复使用 `bg-dash-card-hover`
+   - Focus/hover 状态统一使用 `dash-cyan` 强调色
+   - 状态徽章使用 dash 色彩系统（`dash-red`、`dash-green`、`dash-purple`）
+
+2. **侧边栏主题统一**
+   - `AppSidebar` 不再按路由切换亮/暗主题，全站统一暗色
+   - 消除了从 Home 导航到其他页面时的亮→暗闪烁问题
+
+### 📊 当前状态
+- ✅ Phase 1: 数据层 — 完成
+- ✅ Phase 2: Level 2 市场监控大盘 — 完成
+- ✅ Phase 3: Level 3 单产品深度剖析 — 完成
+- ✅ Phase 4: 细节打磨 — 完成（骨架屏 + 响应式 + 视觉一致性）
+- ✅ Phase 5: 构建 & 部署 — 持续迭代中
+
+### 🔄 潜在后续改进
+- [ ] 页面路由切换过渡动画（Framer Motion AnimatePresence）
+- [ ] Ad Spend 分布柱状图（Dashboard 扩展）
+- [ ] Localization Engine 页面内容改善（当前有占位文本）
+- [ ] Risk Scanner 页面内容改善（部分文案为占位符）
+
 ## 2026-03-06 02:45 — Phase 1-3 完成（主会话手动）
 
 ### ✅ 已完成
