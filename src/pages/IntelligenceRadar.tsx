@@ -100,7 +100,7 @@ export default function IntelligenceRadar() {
       <DashHeader title="出海短视频 / 社交赛道" />
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-4 gap-4 mb-5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="dash-card p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] text-dash-text-muted uppercase tracking-wider">监控 App</span>
@@ -171,9 +171,9 @@ export default function IntelligenceRadar() {
       {/* Main Content */}
       <AnimatePresence mode="wait">
         {activeTab === "monitoring" && (
-          <motion.div key="monitoring" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-12 gap-4">
+          <motion.div key="monitoring" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 xl:grid-cols-12 gap-4">
             {/* Left: Charts */}
-            <div className="col-span-2 space-y-4">
+            <div className="hidden xl:block xl:col-span-2 space-y-4">
               <div className="dash-card p-3">
                 <h3 className="text-[10px] font-semibold text-dash-text mb-3 uppercase tracking-wider">MAU 分布</h3>
                 <div className="h-36">
@@ -217,7 +217,7 @@ export default function IntelligenceRadar() {
             </div>
 
             {/* Center: Data Table */}
-            <div className="col-span-10">
+            <div className="xl:col-span-10 overflow-x-auto">
               <div className="dash-card overflow-hidden">
                 <div className="px-4 py-2.5 border-b border-dash-border flex items-center justify-between">
                   <h3 className="text-xs font-semibold text-dash-text">核心数据监控表</h3>
@@ -348,7 +348,7 @@ export default function IntelligenceRadar() {
               <h3 className="text-sm font-medium text-dash-text">AI 推荐监控</h3>
               <span className="text-[10px] text-dash-text-muted">基于市场动态和竞争格局自动推荐</span>
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[
                 { name: "Clash of Clans", reason: "近期在 SEA 市场加大社交功能投入，可能与短视频赛道产生用户争夺", category: "Gaming → Social", confidence: 72 },
                 { name: "Kwai", reason: "母公司快手在海外市场战略收缩后可能调整品牌策略，需关注", category: "Short Video", confidence: 85 },

@@ -63,9 +63,31 @@
 2. **路由注册**
    - `App.tsx` 新增 Dashboard import 和 Route
 
+## 2026-03-06 05:02 — Cron 迭代 #3
+
+### ✅ 本次完成
+1. **加载骨架屏系统** — 新建 `src/components/ui/skeleton-loader.tsx`
+   - 可复用 Shimmer 组件（渐变动画效果）
+   - KPICardSkeleton / ChartSkeleton / TableSkeleton / PieSkeleton / ModuleCardSkeleton
+   - DashboardSkeleton：完整 Dashboard 页面骨架（KPI行 + 图表行 + 三栏模块）
+   - RadarSkeleton：完整 Intelligence Radar 页面骨架（统计卡 + Tab + 表格 + 图表侧栏）
+   - Tailwind 配置新增 `shimmer` keyframe 动画
+
+2. **Dashboard / Radar 页面加载动画**
+   - Dashboard：800ms 骨架屏过渡 → 数据渲染，体验丝滑
+   - Intelligence Radar：600ms 骨架屏过渡 → 数据渲染
+
+3. **搜索框快捷操作** — Home 页增加 Quick Action Chips
+   - 搜索框未展开时显示 4 个快捷建议卡片：
+     - 📊 Thrillzz 竞品分析
+     - 🔍 市场异动
+     - 💡 投放建议
+     - 📈 ARPU 对比
+   - 点击直接触发 AI 对话，预填查询语句
+   - 展开聊天面板后自动隐藏 chips
+
 ### 🔄 待做（cron 持续迭代）
-- [ ] 加载骨架屏
 - [ ] 响应式适配移动端
-- [ ] 搜索框 AI 对话优化
 - [ ] 视觉一致性检查
 - [ ] Ad Spend 分布柱状图（Dashboard 扩展）
+- [ ] CompetitorDeepDive 骨架屏

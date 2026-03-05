@@ -1,8 +1,10 @@
 import { useParams, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { ArrowLeft, TrendingUp, TrendingDown, Globe, Star, Smartphone, Bot, Calendar, AlertTriangle, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, CartesianGrid, Legend } from "recharts";
 import { getCompetitor, INDUSTRY_BENCHMARKS, type TimelineEvent } from "@/data/competitors";
+import { DeepDiveSkeleton } from "@/components/ui/skeleton-loader";
 
 function EventIcon({ type }: { type: TimelineEvent["type"] }) {
   const icons = {
@@ -27,6 +29,15 @@ function ImpactBadge({ impact }: { impact: TimelineEvent["impact"] }) {
 export default function CompetitorDeepDive() {
   const { id } = useParams();
   const comp = getCompetitor(id || "");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => setIsLoading(false), 600);
+    return () => clearTimeout(timer);
+  }, [id]);
+
+  if (isLoading) return <DeepDiveSkeleton />;
 
   if (!comp) {
     return (
@@ -67,10 +78,10 @@ export default function CompetitorDeepDive() {
 
       {/* App Header */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="dash-card p-5 mb-5">
-        <div className="flex items-start gap-5">
-          <div className="w-16 h-16 rounded-2xl bg-dash-card-hover flex items-center justify-center text-3xl">{comp.icon}</div>
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-1">
+        <div className="flex flex-col md:flex-row items-start gap-5">
+          <div className="w-16 h-16 rounded-2xl bg-dash-card-hover flex items-center justify-center text-3xl shrink-0">{comp.icon}</div>
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-3 mb-1">
               <h1 className="text-xl font-bold text-dash-text">{comp.name}</h1>
               <span className={`px-2 py-0.5 rounded text-[10px] font-medium border ${
                 comp.status === "rising" ? "bg-dash-green/15 text-dash-green border-dash-green/30" :
@@ -83,7 +94,7 @@ export default function CompetitorDeepDive() {
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-4 text-xs text-dash-text-muted">
+            <div className="flex flex-wrap items-center gap-3 md:gap-4 text-xs text-dash-text-muted">
               <span className="flex items-center gap-1"><Smartphone className="w-3 h-3" />{comp.platform}</span>
               <span className="flex items-center gap-1"><Globe className="w-3 h-3" />{comp.region.join(" · ")}</span>
               <span className="flex items-center gap-1"><Star className="w-3 h-3 text-dash-orange" />{comp.rating}</span>
@@ -91,7 +102,7 @@ export default function CompetitorDeepDive() {
             </div>
           </div>
           {/* Key metrics */}
-          <div className="grid grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-6 w-full md:w-auto mt-3 md:mt-0">
             {[
               { label: "MAU", value: `${comp.metrics.mau.toFixed(1)}M`, change: comp.metrics.mauChange },
               { label: "广告消耗", value: `$${(comp.metrics.adSpend/1000).toFixed(1)}M`, change: comp.metrics.adSpendChange },
@@ -113,9 +124,9 @@ export default function CompetitorDeepDive() {
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-12 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left: Charts */}
-        <div className="col-span-8 space-y-5">
+        <div className="lg:col-span-8 space-y-5">
           {/* MAU + Ad Spend dual axis chart */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="dash-card p-5">
             <h3 className="text-xs font-semibold text-dash-text mb-4 uppercase tracking-wider">用户增长 vs 广告消耗（30 天）</h3>
@@ -150,7 +161,7 @@ export default function CompetitorDeepDive() {
           {/* Retention vs Benchmark */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="dash-card p-5">
             <h3 className="text-xs font-semibold text-dash-text mb-4 uppercase tracking-wider">留存率 vs 行业基准</h3>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {retentionData.map(r => {
                 const diff = r.value - r.benchmark;
                 const isGood = diff >= 0;
@@ -197,7 +208,7 @@ export default function CompetitorDeepDive() {
         </div>
 
         {/* Right: Timeline + Anomalies */}
-        <div className="col-span-4 space-y-5">
+        <div className="lg:col-span-4 space-y-5">
           {/* Anomalies */}
           {comp.anomalies.length > 0 && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="dash-card p-4">

@@ -219,4 +219,124 @@ export function RadarSkeleton() {
   );
 }
 
+// CompetitorDeepDive skeleton layout
+export function DeepDiveSkeleton() {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex-1 dash-page p-6 overflow-auto"
+    >
+      {/* Back nav */}
+      <Shimmer className="w-28 h-4 rounded mb-4" />
+
+      {/* App Header Card */}
+      <div className="bg-dash-card rounded-xl border border-dash-border p-5 mb-5">
+        <div className="flex flex-col md:flex-row items-start gap-5">
+          <Shimmer className="w-16 h-16 rounded-2xl shrink-0" />
+          <div className="flex-1 space-y-2">
+            <div className="flex items-center gap-3">
+              <Shimmer className="w-32 h-5 rounded" />
+              <Shimmer className="w-16 h-4 rounded" />
+            </div>
+            <div className="flex items-center gap-4">
+              <Shimmer className="w-16 h-3 rounded" />
+              <Shimmer className="w-24 h-3 rounded" />
+              <Shimmer className="w-12 h-3 rounded" />
+            </div>
+          </div>
+          <div className="grid grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="text-center space-y-1">
+                <Shimmer className="w-10 h-3 rounded mx-auto" />
+                <Shimmer className="w-14 h-5 rounded mx-auto" />
+                <Shimmer className="w-12 h-3 rounded mx-auto" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        {/* Left: Charts */}
+        <div className="lg:col-span-8 space-y-5">
+          <ChartSkeleton height={256} />
+          {/* Retention */}
+          <div className="bg-dash-card rounded-xl border border-dash-border p-5">
+            <Shimmer className="w-36 h-4 rounded mb-4" />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="bg-dash-card-hover rounded-lg p-4 text-center space-y-2">
+                  <Shimmer className="w-12 h-3 rounded mx-auto" />
+                  <Shimmer className="w-16 h-8 rounded mx-auto" />
+                  <Shimmer className="w-24 h-3 rounded mx-auto" />
+                  <Shimmer className="w-full h-2 rounded mt-2" />
+                  <Shimmer className="w-full h-2 rounded" />
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* AI Insight */}
+          <div className="bg-dash-card rounded-xl border border-dash-border p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Shimmer className="w-4 h-4 rounded" />
+              <Shimmer className="w-24 h-4 rounded" />
+            </div>
+            <Shimmer className="w-full h-3 rounded mb-2" />
+            <Shimmer className="w-full h-3 rounded mb-2" />
+            <Shimmer className="w-3/4 h-3 rounded" />
+          </div>
+        </div>
+
+        {/* Right: Timeline */}
+        <div className="lg:col-span-4 space-y-5">
+          <div className="bg-dash-card rounded-xl border border-dash-border p-4">
+            <Shimmer className="w-20 h-4 rounded mb-3" />
+            <div className="space-y-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="p-3 rounded-lg bg-dash-card-hover space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <Shimmer className="w-1.5 h-1.5 rounded-full" />
+                    <Shimmer className="w-16 h-3 rounded" />
+                    <Shimmer className="w-12 h-3 rounded" />
+                  </div>
+                  <Shimmer className="w-full h-3 rounded" />
+                  <Shimmer className="w-3/4 h-3 rounded" />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="bg-dash-card rounded-xl border border-dash-border p-4">
+            <Shimmer className="w-20 h-4 rounded mb-4" />
+            <div className="space-y-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="flex gap-3">
+                  <Shimmer className="w-5 h-5 rounded-full shrink-0" />
+                  <div className="flex-1 space-y-1">
+                    <Shimmer className="w-20 h-3 rounded" />
+                    <Shimmer className="w-full h-3 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="bg-dash-card rounded-xl border border-dash-border p-4">
+            <Shimmer className="w-20 h-4 rounded mb-3" />
+            <div className="space-y-2">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between py-1.5">
+                  <Shimmer className="w-16 h-3 rounded" />
+                  <Shimmer className="w-20 h-3 rounded" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 export { Shimmer };
