@@ -3,7 +3,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AuthGuard from "@/components/AuthGuard";
 import AppSidebar from "@/components/layout/AppSidebar";
+import Login from "./pages/Login";
 import Index from "./pages/Index";
 import IntelligenceRadar from "./pages/IntelligenceRadar";
 import CompetitorDeepDive from "./pages/CompetitorDeepDive";
@@ -19,17 +21,30 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter basename="/intelligent-insights-hub">
-        <div className="flex min-h-screen">
-          <AppSidebar />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/intelligence-radar" element={<IntelligenceRadar />} />
-            <Route path="/competitor/:id" element={<CompetitorDeepDive />} />
-            <Route path="/localization-engine" element={<LocalizationEngine />} />
-            <Route path="/risk-scanner" element={<RiskScanner />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
+        <Routes>
+          {/* Public route */}
+          <Route path="/login" element={<Login />} />
+
+          {/* Protected routes */}
+          <Route
+            path="/*"
+            element={
+              <AuthGuard>
+                <div className="flex min-h-screen">
+                  <AppSidebar />
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/intelligence-radar" element={<IntelligenceRadar />} />
+                    <Route path="/competitor/:id" element={<CompetitorDeepDive />} />
+                    <Route path="/localization-engine" element={<LocalizationEngine />} />
+                    <Route path="/risk-scanner" element={<RiskScanner />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </div>
+              </AuthGuard>
+            }
+          />
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

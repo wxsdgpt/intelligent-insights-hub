@@ -1,7 +1,8 @@
-import { Search, Sparkles, Play, ArrowRight } from "lucide-react";
+import { Search, Sparkles, Play, ArrowRight, Send, X, Bot, User } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useMoboostAI } from "@/hooks/use-moboost-ai";
 
 const cards = [
   {
@@ -38,9 +39,34 @@ const cards = [
 
 export default function Index() {
   const [query, setQuery] = useState("");
+  const [chatOpen, setChatOpen] = useState(false);
+  const { messages, loading, sendQuery, clearMessages } = useMoboostAI();
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!query.trim()) return;
+    if (!chatOpen) setChatOpen(true);
+    sendQuery(query);
+    setQuery("");
+  };
+
+  const handleSearchFocus = () => {
+    setChatOpen(true);
+  };
+
+  const handleCloseChat = () => {
+    setChatOpen(false);
+    clearMessages();
+  };
 
   return (
-    <div className="flex-1 min-h-screen bg-gradient-to-br from-background via-muted to-background">
+    <div className="flex-1 min-h-screen bg-gradient-to-br from-background via-muted to-background relative">
       {/* Agent Status */}
       <div className="flex justify-center pt-4">
         <div className="flex items-center gap-2 text-sm">
@@ -52,26 +78,102 @@ export default function Index() {
 
       {/* Search Bar */}
       <div className="max-w-2xl mx-auto mt-8 px-6">
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="relative"
-        >
-          <div className="flex items-center bg-card rounded-2xl shadow-lg border border-border px-5 py-4">
-            <Search className="w-5 h-5 text-muted-foreground mr-3" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Ask Moboost AI anything..."
-              className="flex-1 bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
-            />
-            <button className="ml-3 p-1.5 rounded-lg hover:bg-muted transition-colors">
-              <Sparkles className="w-5 h-5 text-secondary" />
-            </button>
-          </div>
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
+          <form onSubmit={handleSearch} className="relative">
+            <div className="flex items-center bg-card rounded-2xl shadow-lg border border-border px-5 py-4">
+              <Search className="w-5 h-5 text-muted-foreground mr-3" />
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={handleSearchFocus}
+                placeholder="Ask Moboost AI anything..."
+                className="flex-1 bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
+              />
+              {query.trim() ? (
+                <button type="submit" className="ml-3 p-1.5 rounded-lg hover:bg-muted transition-colors">
+                  <Send className="w-5 h-5 text-primary" />
+                </button>
+              ) : (
+                <button type="button" className="ml-3 p-1.5 rounded-lg hover:bg-muted transition-colors">
+                  <Sparkles className="w-5 h-5 text-secondary" />
+                </button>
+              )}
+            </div>
+          </form>
         </motion.div>
       </div>
+
+      {/* AI Chat Panel */}
+      <AnimatePresence>
+        {chatOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: "auto" }}
+            exit={{ opacity: 0, y: -10, height: 0 }}
+            className="max-w-2xl mx-auto px-6 mt-3"
+          >
+            <div className="bg-card rounded-2xl border border-border shadow-lg overflow-hidden">
+              {/* Chat Header */}
+              <div className="flex items-center justify-between px-5 py-3 border-b border-border">
+                <div className="flex items-center gap-2">
+                  <Bot className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium text-foreground">Moboost AI</span>
+                  {loading && (
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                      thinking...
+                    </span>
+                  )}
+                </div>
+                <button onClick={handleCloseChat} className="p-1 rounded-md hover:bg-muted transition-colors">
+                  <X className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </div>
+
+              {/* Chat Messages */}
+              <div className="max-h-80 overflow-y-auto px-5 py-4 space-y-4">
+                {messages.length === 0 && (
+                  <div className="text-center py-8">
+                    <Sparkles className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
+                    <p className="text-sm text-muted-foreground">输入问题，Moboost AI 将为你分析</p>
+                  </div>
+                )}
+                {messages.map((msg, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                  >
+                    {msg.role === "assistant" && (
+                      <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <Bot className="w-3.5 h-3.5 text-primary" />
+                      </div>
+                    )}
+                    <div
+                      className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                        msg.role === "user"
+                          ? "bg-primary text-primary-foreground rounded-br-md"
+                          : "bg-muted text-foreground rounded-bl-md"
+                      }`}
+                    >
+                      <pre className="whitespace-pre-wrap font-sans">{msg.content}</pre>
+                    </div>
+                    {msg.role === "user" && (
+                      <div className="w-7 h-7 rounded-full bg-foreground/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <User className="w-3.5 h-3.5 text-foreground/60" />
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+                <div ref={chatEndRef} />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Cards */}
       <div className="max-w-5xl mx-auto mt-12 px-6 grid grid-cols-1 md:grid-cols-3 gap-6">
