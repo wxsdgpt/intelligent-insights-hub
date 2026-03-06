@@ -5,14 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthGuard from "@/components/AuthGuard";
 import AppSidebar from "@/components/layout/AppSidebar";
+import AnimatedRoutes from "@/components/layout/AnimatedRoutes";
 import Login from "./pages/Login";
-import Index from "./pages/Index";
-import IntelligenceRadar from "./pages/IntelligenceRadar";
-import CompetitorDeepDive from "./pages/CompetitorDeepDive";
-import LocalizationEngine from "./pages/LocalizationEngine";
-import RiskScanner from "./pages/RiskScanner";
-import Dashboard from "./pages/Dashboard";
-import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -33,15 +27,7 @@ const App = () => (
               <AuthGuard>
                 <div className="flex min-h-screen">
                   <AppSidebar />
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/intelligence-radar" element={<IntelligenceRadar />} />
-                    <Route path="/competitor/:id" element={<CompetitorDeepDive />} />
-                    <Route path="/localization-engine" element={<LocalizationEngine />} />
-                    <Route path="/risk-scanner" element={<RiskScanner />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
+                  <AnimatedRoutes />
                 </div>
               </AuthGuard>
             }

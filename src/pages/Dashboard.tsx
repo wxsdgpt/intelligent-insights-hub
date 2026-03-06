@@ -308,6 +308,66 @@ export default function Dashboard() {
         </motion.div>
       </div>
 
+      {/* Ad Spend Distribution Bar Chart */}
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.32 }}
+        className="bg-dash-card rounded-xl border border-dash-border p-5 mb-6"
+      >
+        <h3 className="text-sm font-semibold text-dash-text mb-4 flex items-center gap-2">
+          <DollarSign className="w-4 h-4 text-dash-purple" />
+          Ad Spend Distribution by App
+        </h3>
+        <ResponsiveContainer width="100%" height={200}>
+          <BarChart
+            data={stats.adSpendDist}
+            layout="vertical"
+            margin={{ left: 10, right: 20, top: 0, bottom: 0 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--dash-border))" horizontal={false} />
+            <XAxis
+              type="number"
+              tick={{ fill: "hsl(var(--dash-text-muted))", fontSize: 10 }}
+              tickFormatter={(v: number) => "$" + (v / 1e3).toFixed(0) + "K"}
+            />
+            <YAxis
+              type="category"
+              dataKey="name"
+              width={100}
+              tick={{ fill: "hsl(var(--dash-text-muted))", fontSize: 11 }}
+              tickFormatter={(v: string) => {
+                const c = stats.adSpendDist.find(d => d.name === v);
+                return c ? `${c.icon} ${v}` : v;
+              }}
+            />
+            <Tooltip
+              content={({ active, payload }) => {
+                if (!active || !payload?.length) return null;
+                const d = payload[0].payload;
+                const pct = ((d.adSpend / stats.totalAdSpend) * 100).toFixed(1);
+                return (
+                  <div className="bg-dash-card border border-dash-border rounded-lg px-3 py-2 shadow-lg text-xs">
+                    <p className="text-dash-text font-medium mb-0.5">{d.icon} {d.name}</p>
+                    <p className="text-dash-purple">Spend: {formatUSD(d.adSpend)}</p>
+                    <p className="text-dash-text-muted">Share: {pct}%</p>
+                  </div>
+                );
+              }}
+            />
+            <Bar
+              dataKey="adSpend"
+              radius={[0, 4, 4, 0]}
+              maxBarSize={24}
+            >
+              {stats.adSpendDist.map((_, i) => (
+                <Cell key={i} fill={COLORS[i % COLORS.length]} fillOpacity={0.85} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </motion.div>
+
       {/* Three-Column Module Summary */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
         {/* Intelligence Radar Summary */}
