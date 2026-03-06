@@ -1,5 +1,34 @@
 # Moboost 开发进度
 
+## 2026-03-06 08:05 — Cron 迭代 #7
+
+### ✅ 本次完成
+1. **页面路由切换过渡动画** — Framer Motion AnimatePresence
+   - 新建 `PageTransition.tsx`：fade + slide（进入 y:12→0，退出 y:0→-8），300ms 缓动曲线
+   - 新建 `AnimatedRoutes.tsx`：用 `AnimatePresence mode="wait"` 包裹所有路由，基于 `location.pathname` 触发动画
+   - `App.tsx` 重构：移除内联 Routes，改用集中式 AnimatedRoutes 组件，代码更整洁
+   - 效果：侧边栏导航切换时页面内容平滑过渡，不再是硬切
+
+2. **Dashboard Ad Spend 分布柱状图**
+   - 在 Market Trend 图和三栏模块摘要之间新增水平柱状图
+   - 按竞品展示广告消耗分布，每个竞品使用独立颜色 + 品牌 icon
+   - 自定义 Tooltip 显示消耗金额和市场占比百分比
+   - 响应式布局，与现有 dash 暗色主题一致
+
+### 📊 当前状态
+- ✅ Phase 1-5: 全部完成
+- ✅ Localization Engine / Risk Scanner: 完整可演示
+- ✅ 全站视觉一致性（暗色主题统一）
+- ✅ 骨架屏 + 响应式 + 加载动画
+- ✅ 页面路由过渡动画
+- ✅ Dashboard Ad Spend 分布图
+
+### 🔄 潜在后续改进
+- [ ] 搜索框 AI 对话质量优化（更精准的 mock responses）
+- [ ] 移动端适配深度测试
+- [ ] Home 页面搜索框展开时的动画优化
+- [ ] 数据导出功能（CSV/PDF）
+
 ## 2026-03-06 07:17 — Cron 迭代 #6
 
 ### ✅ 本次完成
