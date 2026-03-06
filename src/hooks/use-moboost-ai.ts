@@ -75,6 +75,63 @@ ${anomalies.length > 0 ? `**⚠️ 高优异动 (${anomalies.length}条)**\n${an
 ${comp.aiInsight}`;
     },
   },
+  // App comparison (two apps head-to-head)
+  {
+    match: (q) => {
+      const lq = q.toLowerCase();
+      const hasCompareIntent = lq.includes("对比") || lq.includes("比较") || lq.includes("compare") || lq.includes("vs") || lq.includes("versus") || lq.includes("和") || lq.includes("与");
+      if (!hasCompareIntent) return false;
+      // Need at least 2 competitor names
+      const matched = competitors.filter(c => lq.includes(c.name.toLowerCase()));
+      return matched.length >= 2;
+    },
+    generate: (q) => {
+      const lq = q.toLowerCase();
+      const matched = competitors.filter(c => lq.includes(c.name.toLowerCase())).slice(0, 2);
+      const [a, b] = matched;
+      const ma = a.metrics;
+      const mb = b.metrics;
+
+      const winner = (va: number, vb: number, higher = true) => {
+        if (higher) return va > vb ? "🏆" : va < vb ? "" : "🤝";
+        return va < vb ? "🏆" : va > vb ? "" : "🤝";
+      };
+
+      return `## ⚔️ ${a.icon} ${a.name} vs ${b.icon} ${b.name}
+
+**流量规模**
+| 指标 | ${a.name} | ${b.name} | 优势方 |
+|------|-----------|-----------|--------|
+| MAU | ${formatMAU(ma.mau)} | ${formatMAU(mb.mau)} | ${ma.mau > mb.mau ? a.icon : b.icon} |
+| 增长率 | ${ma.mauChange > 0 ? "+" : ""}${ma.mauChange}% | ${mb.mauChange > 0 ? "+" : ""}${mb.mauChange}% | ${ma.mauChange > mb.mauChange ? a.icon : b.icon} |
+| 月下载 | ${formatMAU(ma.downloads)} | ${formatMAU(mb.downloads)} | ${ma.downloads > mb.downloads ? a.icon : b.icon} |
+
+**用户质量**
+| 指标 | ${a.name} | ${b.name} | 优势方 |
+|------|-----------|-----------|--------|
+| D1 留存 | ${ma.retention.d1}% | ${mb.retention.d1}% | ${ma.retention.d1 > mb.retention.d1 ? a.icon : b.icon} |
+| D7 留存 | ${ma.retention.d7}% | ${mb.retention.d7}% | ${ma.retention.d7 > mb.retention.d7 ? a.icon : b.icon} |
+| D30 留存 | ${ma.retention.d30}% | ${mb.retention.d30}% | ${ma.retention.d30 > mb.retention.d30 ? a.icon : b.icon} |
+| 时长 | ${ma.avgSessionMin}min | ${mb.avgSessionMin}min | ${ma.avgSessionMin > mb.avgSessionMin ? a.icon : b.icon} |
+
+**商业化**
+| 指标 | ${a.name} | ${b.name} | 优势方 |
+|------|-----------|-----------|--------|
+| ARPU | $${ma.arpu.toFixed(2)} | $${mb.arpu.toFixed(2)} | ${ma.arpu > mb.arpu ? a.icon : b.icon} |
+| IAP 收入 | ${formatUSD(ma.iapRevenue)} | ${formatUSD(mb.iapRevenue)} | ${ma.iapRevenue > mb.iapRevenue ? a.icon : b.icon} |
+| 广告消耗 | ${formatUSD(ma.adSpend)} | ${formatUSD(mb.adSpend)} | ${ma.adSpend > mb.adSpend ? a.icon : b.icon} |
+
+**综合评估**
+${ma.mau > mb.mau && ma.retention.d7 > mb.retention.d7
+  ? `${a.icon} ${a.name} 在规模和用户质量上双重领先，竞争优势明显。`
+  : mb.mau > ma.mau && mb.retention.d7 > ma.retention.d7
+    ? `${b.icon} ${b.name} 在规模和用户质量上双重领先，竞争优势明显。`
+    : `两者各有优势 — ${ma.mau > mb.mau ? a.name + " 规模更大" : b.name + " 规模更大"}，${ma.retention.d7 > mb.retention.d7 ? a.name + " 留存更好" : b.name + " 留存更好"}。`}
+${ma.arpu > mb.arpu ? `💰 ${a.name} 的变现效率更高 (ARPU ${(ma.arpu / mb.arpu).toFixed(1)}x)` : `💰 ${b.name} 的变现效率更高 (ARPU ${(mb.arpu / ma.arpu).toFixed(1)}x)`}
+
+💡 **建议：** 深入研究${ma.retention.d7 > mb.retention.d7 ? a.name : b.name}的留存策略和${ma.arpu > mb.arpu ? a.name : b.name}的付费设计。`;
+    },
+  },
   // Market anomalies
   {
     match: (q) => {

@@ -34,6 +34,24 @@ function useRadarStats() {
   }, []);
 }
 
+function useGreeting() {
+  const [now, setNow] = useState(new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 60_000);
+    return () => clearInterval(timer);
+  }, []);
+  const hour = now.getHours();
+  let greeting: string;
+  let emoji: string;
+  if (hour >= 5 && hour < 12) { greeting = "Good Morning"; emoji = "☀️"; }
+  else if (hour >= 12 && hour < 17) { greeting = "Good Afternoon"; emoji = "🌤"; }
+  else if (hour >= 17 && hour < 21) { greeting = "Good Evening"; emoji = "🌅"; }
+  else { greeting = "Working Late"; emoji = "🌙"; }
+  const timeStr = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
+  const dateStr = now.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+  return { greeting, emoji, timeStr, dateStr };
+}
+
 export default function Index() {
   const [query, setQuery] = useState("");
   const [chatOpen, setChatOpen] = useState(false);
@@ -41,6 +59,7 @@ export default function Index() {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const stats = useRadarStats();
+  const { greeting, emoji, timeStr, dateStr } = useGreeting();
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -123,21 +142,36 @@ export default function Index() {
 
   return (
     <div className="flex-1 min-h-screen bg-dash-bg relative overflow-auto">
-      {/* Agent Status */}
-      <div className="flex justify-center pt-5">
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-dash-text-muted">Moboost Agent Status:</span>
-          <span className="w-2 h-2 rounded-full bg-dash-green animate-pulse-glow" />
-          <span className="text-dash-green font-medium">Active</span>
-          <span className="text-dash-text-muted/50 mx-2">|</span>
-          <span className="text-dash-text-muted">
-            {stats.risingApps} rising · {stats.decliningApps} declining
-          </span>
-        </div>
+      {/* Greeting Header */}
+      <div className="max-w-2xl mx-auto pt-8 px-6">
+        <motion.div
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="flex items-center justify-between"
+        >
+          <div>
+            <h1 className="text-2xl font-bold text-dash-text">
+              {emoji} {greeting}
+            </h1>
+            <p className="text-sm text-dash-text-muted mt-1">
+              {dateStr} · {timeStr}
+            </p>
+          </div>
+          <div className="flex items-center gap-3 text-xs">
+            <div className="flex items-center gap-1.5 bg-dash-card rounded-full px-3 py-1.5 border border-dash-border">
+              <span className="w-2 h-2 rounded-full bg-dash-green animate-pulse" />
+              <span className="text-dash-green font-medium">Agent Active</span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-dash-card rounded-full px-3 py-1.5 border border-dash-border">
+              <TrendingUp className="w-3 h-3 text-dash-cyan" />
+              <span className="text-dash-text-muted">{stats.risingApps}↑ {stats.decliningApps}↓</span>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
       {/* Search Bar */}
-      <div className="max-w-2xl mx-auto mt-8 px-6">
+      <div className="max-w-2xl mx-auto mt-6 px-6">
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
           <form onSubmit={handleSearch} className="relative">
             <div className="flex items-center bg-dash-card rounded-2xl shadow-lg border border-dash-border px-5 py-4 focus-within:border-dash-cyan/40 transition-colors">
@@ -177,6 +211,7 @@ export default function Index() {
             <div className="flex flex-wrap justify-center gap-2">
               {[
                 { emoji: "📊", label: "Thrillzz 竞品分析", query: "分析 Thrillzz 最近的用户增长趋势和投放策略" },
+                { emoji: "⚔️", label: "Thrillzz vs Likee", query: "对比 Thrillzz 和 Likee 的核心数据" },
                 { emoji: "🔍", label: "市场异动", query: "最近有什么重要的市场异动？" },
                 { emoji: "💡", label: "投放建议", query: "基于当前竞品数据，给出投放优化建议" },
                 { emoji: "📈", label: "ARPU 对比", query: "对比各竞品的 ARPU 和商业化能力" },
