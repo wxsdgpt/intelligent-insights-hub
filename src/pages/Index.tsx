@@ -227,11 +227,14 @@ export default function Index() {
               </div>
 
               {/* Chat Messages */}
-              <div className="max-h-80 overflow-y-auto px-5 py-4 space-y-4">
+              <div className="max-h-96 overflow-y-auto px-5 py-4 space-y-4">
                 {messages.length === 0 && (
-                  <div className="text-center py-8">
-                    <Sparkles className="w-8 h-8 text-dash-text-muted/30 mx-auto mb-3" />
-                    <p className="text-sm text-dash-text-muted">输入问题，Moboost AI 将为你分析</p>
+                  <div className="text-center py-6">
+                    <Sparkles className="w-8 h-8 text-dash-cyan/30 mx-auto mb-3" />
+                    <p className="text-sm font-medium text-dash-text mb-1">Moboost AI 就绪</p>
+                    <p className="text-xs text-dash-text-muted max-w-xs mx-auto">
+                      基于 {competitors.length} 个竞品的实时监控数据，为你提供竞品分析、市场洞察和投放建议
+                    </p>
                   </div>
                 )}
                 {messages.map((msg, i) => (
@@ -247,13 +250,45 @@ export default function Index() {
                       </div>
                     )}
                     <div
-                      className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                      className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                         msg.role === "user"
                           ? "bg-dash-cyan text-dash-bg rounded-br-md"
                           : "bg-dash-card-hover text-dash-text rounded-bl-md"
                       }`}
                     >
-                      <pre className="whitespace-pre-wrap font-sans">{msg.content}</pre>
+                      {msg.role === "assistant" ? (
+                        <div className="whitespace-pre-wrap font-sans [&>*]:my-0">
+                          {msg.content.split("\n").map((line, li) => {
+                            if (line.startsWith("## ")) {
+                              return <p key={li} className="text-sm font-bold text-dash-cyan mt-1 mb-1.5">{line.slice(3)}</p>;
+                            }
+                            if (line.startsWith("**") && line.endsWith("**")) {
+                              return <p key={li} className="font-semibold mt-2 mb-0.5">{line.slice(2, -2)}</p>;
+                            }
+                            // Inline bold
+                            const parts = line.split(/(\*\*[^*]+\*\*)/g);
+                            const hasInlineBold = parts.length > 1;
+                            if (hasInlineBold) {
+                              return (
+                                <p key={li}>
+                                  {parts.map((part, pi) =>
+                                    part.startsWith("**") && part.endsWith("**")
+                                      ? <strong key={pi} className="font-semibold">{part.slice(2, -2)}</strong>
+                                      : <span key={pi}>{part}</span>
+                                  )}
+                                </p>
+                              );
+                            }
+                            if (line === "") return <br key={li} />;
+                            return <p key={li}>{line}</p>;
+                          })}
+                          {msg.isStreaming && (
+                            <span className="inline-block w-1.5 h-4 bg-dash-cyan/60 ml-0.5 animate-pulse rounded-sm align-text-bottom" />
+                          )}
+                        </div>
+                      ) : (
+                        <pre className="whitespace-pre-wrap font-sans">{msg.content}</pre>
+                      )}
                     </div>
                     {msg.role === "user" && (
                       <div className="w-7 h-7 rounded-full bg-dash-text/10 flex items-center justify-center shrink-0 mt-0.5">
