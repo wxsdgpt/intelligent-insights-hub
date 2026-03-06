@@ -1,5 +1,31 @@
 # Moboost 开发进度
 
+## 2026-03-06 10:17 — Cron 迭代 #10
+
+### ✅ 本次完成
+1. **Dashboard 时间范围选择器 (7d/14d/30d)**
+   - 顶部新增 pill 按钮组：7 Days / 14 Days / 30 Days，默认 30d
+   - 切换时间范围后，趋势图自动裁剪至对应天数
+   - XAxis 间隔自适应：7d 显示全部日期、14d 隔一天、30d 隔四天
+   - KPI 卡片新增 period-over-period 变化：Total MAU、Ad Spend、Revenue 均显示对比上一周期的涨跌百分比
+   - 图表标题动态更新为 "{N}-Day Market Trend"
+   - 左侧显示"Showing data for the last N days"说明文字
+
+### 📊 当前状态
+- ✅ Phase 1-5: 全部完成
+- ✅ 全站视觉一致性 + 骨架屏 + 响应式 + 过渡动画
+- ✅ Localization Engine / Risk Scanner: 完整可演示
+- ✅ Dashboard: KPI + 趋势图 + Ad Spend 分布 + **时间范围选择器**
+- ✅ 搜索框 AI 对话：7 种场景（竞品分析/对比/异动/ARPU/投放/留存/大盘）
+- ✅ Home 页：时感问候 + 实时时钟 + Agent 状态徽章
+
+### 🔄 潜在后续改进
+- [ ] 移动端适配深度测试
+- [ ] 数据导出功能（CSV/PDF）
+- [ ] 搜索框斜杠命令 (/compare, /export, /trend)
+- [ ] 时间趋势查询（"Thrillzz 上周 vs 这周"）
+- [ ] Dashboard 饼图/柱状图也响应时间范围切换
+
 ## 2026-03-06 09:32 — Cron 迭代 #9
 
 ### ✅ 本次完成
