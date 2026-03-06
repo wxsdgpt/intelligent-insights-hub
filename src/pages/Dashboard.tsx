@@ -16,6 +16,13 @@ import { DashboardSkeleton } from "@/components/ui/skeleton-loader";
 
 const COLORS = ["#00CED1", "#7C3AED", "#3B82F6", "#F59E0B", "#10B981", "#EF4444", "#EC4899"];
 
+type TimeRange = "7d" | "14d" | "30d";
+const TIME_RANGE_OPTIONS: { value: TimeRange; label: string }[] = [
+  { value: "7d", label: "7 Days" },
+  { value: "14d", label: "14 Days" },
+  { value: "30d", label: "30 Days" },
+];
+
 function formatNum(n: number): string {
   if (n >= 1000) return (n / 1000).toFixed(1) + "B";
   if (n >= 1) return n.toFixed(1) + "M";
@@ -28,7 +35,7 @@ function formatUSD(n: number): string {
 }
 
 // Aggregate stats
-function useAggregateStats() {
+function useAggregateStats(timeRange: TimeRange) {
   return useMemo(() => {
     const totalMAU = competitors.reduce((s, c) => s + c.metrics.mau, 0);
     const totalAdSpend = competitors.reduce((s, c) => s + c.metrics.adSpend, 0);
@@ -56,7 +63,7 @@ function useAggregateStats() {
       .map(c => ({ name: c.name, icon: c.icon, adSpend: c.metrics.adSpend }))
       .sort((a, b) => b.adSpend - a.adSpend);
 
-    // Aggregate 30-day trend from time series (sum all competitors per day)
+    // Aggregate full 30-day trend from time series (sum all competitors per day)
     const dayMap: Record<string, { date: string; mau: number; adSpend: number; downloads: number; revenue: number }> = {};
     competitors.forEach(c => {
       c.timeSeries.forEach(d => {
@@ -69,7 +76,30 @@ function useAggregateStats() {
         dayMap[d.date].revenue += d.revenue;
       });
     });
-    const trend30d = Object.values(dayMap).sort((a, b) => a.date.localeCompare(b.date));
+    const allDays = Object.values(dayMap).sort((a, b) => a.date.localeCompare(b.date));
+
+    // Slice trend data based on selected time range
+    const rangeDays = timeRange === "7d" ? 7 : timeRange === "14d" ? 14 : 30;
+    const trendData = allDays.slice(-rangeDays);
+
+    // Calculate period-over-period changes for the selected range
+    const currentPeriod = allDays.slice(-rangeDays);
+    const previousPeriod = allDays.slice(-rangeDays * 2, -rangeDays);
+
+    const sumField = (arr: typeof allDays, field: "mau" | "adSpend" | "downloads" | "revenue") =>
+      arr.reduce((s, d) => s + d[field], 0);
+
+    const currentMAU = currentPeriod.length > 0 ? currentPeriod[currentPeriod.length - 1].mau : 0;
+    const prevMAU = previousPeriod.length > 0 ? previousPeriod[previousPeriod.length - 1].mau : currentMAU;
+    const mauChange = prevMAU > 0 ? ((currentMAU - prevMAU) / prevMAU) * 100 : 0;
+
+    const currentSpend = sumField(currentPeriod, "adSpend");
+    const prevSpend = sumField(previousPeriod, "adSpend");
+    const spendChange = prevSpend > 0 ? ((currentSpend - prevSpend) / prevSpend) * 100 : 0;
+
+    const currentRev = sumField(currentPeriod, "revenue");
+    const prevRev = sumField(previousPeriod, "revenue");
+    const revChange = prevRev > 0 ? ((currentRev - prevRev) / prevRev) * 100 : 0;
 
     // Region coverage
     const regionSet = new Set<string>();
@@ -85,11 +115,14 @@ function useAggregateStats() {
       avgRetentionD1, avgRetentionD7, avgRetentionD30, avgARPU,
       anomalies, highAnomalies, mediumAnomalies,
       risingApps, decliningApps,
-      marketShare, adSpendDist, trend30d,
+      marketShare, adSpendDist, trendData,
       regions: Array.from(regionSet),
       topByGrowth, topByARPU, topByAdSpend,
+      // Period-over-period changes
+      mauChange, spendChange, revChange,
+      rangeDays,
     };
-  }, []);
+  }, [timeRange]);
 }
 
 // Localization & Risk mock stats
@@ -141,7 +174,8 @@ function KPICard({ icon: Icon, label, value, change, changeLabel, color, delay }
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
-  const stats = useAggregateStats();
+  const [timeRange, setTimeRange] = useState<TimeRange>("30d");
+  const stats = useAggregateStats(timeRange);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 800);
@@ -168,20 +202,44 @@ export default function Dashboard() {
     <div className="flex-1 min-h-screen bg-dash-bg text-dash-text p-6 overflow-auto">
       <DashHeader title="Dashboard" subtitle="Market Overview" breadcrumb="Moboost Command Center" />
 
+      {/* Time Range Selector */}
+      <div className="flex items-center justify-between mb-6">
+        <p className="text-xs text-dash-text-muted">
+          Showing data for the last <span className="text-dash-cyan font-medium">{stats.rangeDays} days</span>
+        </p>
+        <div className="flex items-center bg-dash-card rounded-lg border border-dash-border p-0.5">
+          {TIME_RANGE_OPTIONS.map(opt => (
+            <button
+              key={opt.value}
+              onClick={() => setTimeRange(opt.value)}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                timeRange === opt.value
+                  ? "bg-dash-cyan text-dash-bg shadow-sm"
+                  : "text-dash-text-muted hover:text-dash-text"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Top KPI Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <KPICard
           icon={Users} label="Total MAU" value={formatNum(stats.totalMAU)}
-          change={((stats.risingApps.length - stats.decliningApps.length) / competitors.length) * 10}
-          changeLabel="Total MAU across tracked apps" color="bg-dash-cyan" delay={0.05}
+          change={stats.mauChange}
+          changeLabel={`vs previous ${stats.rangeDays}d`} color="bg-dash-cyan" delay={0.05}
         />
         <KPICard
           icon={DollarSign} label="Total Ad Spend" value={formatUSD(stats.totalAdSpend)}
-          changeLabel="Monthly aggregate ad spend" color="bg-dash-purple" delay={0.1}
+          change={stats.spendChange}
+          changeLabel={`vs previous ${stats.rangeDays}d`} color="bg-dash-purple" delay={0.1}
         />
         <KPICard
           icon={BarChart3} label="Total Revenue" value={formatUSD(stats.totalRevenue)}
-          changeLabel="Monthly IAP revenue" color="bg-dash-green" delay={0.15}
+          change={stats.revChange}
+          changeLabel={`vs previous ${stats.rangeDays}d`} color="bg-dash-green" delay={0.15}
         />
         <KPICard
           icon={AlertTriangle} label="Active Alerts"
@@ -201,10 +259,10 @@ export default function Dashboard() {
         >
           <h3 className="text-sm font-semibold text-dash-text mb-4 flex items-center gap-2">
             <Activity className="w-4 h-4 text-dash-cyan" />
-            30-Day Market Trend
+            {stats.rangeDays}-Day Market Trend
           </h3>
           <ResponsiveContainer width="100%" height={220}>
-            <AreaChart data={stats.trend30d}>
+            <AreaChart data={stats.trendData}>
               <defs>
                 <linearGradient id="mauGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#00CED1" stopOpacity={0.3} />
@@ -220,7 +278,7 @@ export default function Dashboard() {
                 dataKey="date"
                 tick={{ fill: "hsl(var(--dash-text-muted))", fontSize: 10 }}
                 tickFormatter={(v: string) => v.slice(5)}
-                interval={4}
+                interval={stats.rangeDays <= 7 ? 0 : stats.rangeDays <= 14 ? 1 : 4}
               />
               <YAxis
                 yAxisId="mau"
